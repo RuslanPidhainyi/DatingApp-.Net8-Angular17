@@ -1,0 +1,20 @@
+<h1>{{title}}</h1>
+
+
+<ul>
+   @for (user of users; track user.id) {
+      <li>
+         {{user.id}} - {{user.userName}}
+      </li>
+   }
+</ul>
+
+<!-- 
+Zebyś wykorzystać nam ngFor - potrzebno nam zaimportowac bibliotke "NgFor" lub "CommonModule" - (ktora daje rozne func) oraz zaznaczyć w bloku koda @Component w polu imports "NgFor" 
+-->
+
+<!-- <ul>
+   <li *ngFor="let user of users">
+      {{user.id}} - {{user.userName}}
+   </li> 
+</ul> -->

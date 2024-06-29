@@ -13,9 +13,23 @@ builder.Services.AddDbContext<DataContext>(opt =>
 {
    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+//Linijka kta odpowiada za metode CORS
+builder.Services.AddCors();
  
 
 var app = builder.Build(); 
+
+app.UseCors(x => x.AllowAnyHeader()
+.AllowAnyMethod()
+.WithOrigins("http://localhost:4200", "https://localhost:4200"));
+/*
+Mowimy ze naszej polityce chemy zezwolic na dowolny naglowek i dowolny metod, więc pobierz, opublikuj, umieść, usuń z których żródeł chcemy zezwolić na te ządanie. 
+
+WithOrigins("http://localhost:4200") - mozemy Okreslic naszą aplikacje ktora odpowiada za klienta. 
+Wkrotce jednak dodamy mozliwosc uruchamienia naszej app Angulara przez Https(Na tej podstawie mozemy dodac wiele żrodeł w tem samym czasie.)
+
+.WithOrigins("http://localhost:4200", "https://localhost:4200")) - Cors, mowi ze te pochodzenia dla tych dwoch URL jest dozwolony
+*/
 
 
 // 2  А потім мами app аби сконфігуровач Поток запитів HTTP
@@ -25,6 +39,8 @@ app.MapControllers();
 app.Run();
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
+         /***Tak był ten program file na poczętku - i jest to tłumaczone czym jest co.***/
+
 
 // //Ми можемо поділити цей плік на 2 секції - (Послуги)
 

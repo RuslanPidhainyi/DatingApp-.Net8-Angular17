@@ -3,11 +3,9 @@ using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API;
+namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]// api/users - aby uzyskac dostęp do punktow kocnowych w kontrollerze. Urzytkownik biedzie przegladał localhost 5001, a następnie użytkownicy zostaną przekierowany do tego kontrolera i znajdujący się w nim punktów końcowych 
-public class UsersController(DataContext context) : ControllerBase //dzidziczenia bazowego kontrollera
+public class UsersController(DataContext context) : BaseApiController
 {
     //Metoda do zwracania odpowiedzi HTTP  do klienta 
     [HttpGet] //Ządania HTTP Get 

@@ -1,6 +1,8 @@
 //Ми можемо поділити цей плік на 2 секції - (Послуги)
 
 using API.Data;
+using API.Interfaces;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +17,13 @@ builder.Services.AddDbContext<DataContext>(opt =>
 });
 //Linijka kta odpowiada za metode CORS
 builder.Services.AddCors();
- 
+
+//Okreslamy czas życia usługi:
+
+//builder.Services.AddSingleton()
+//builder.Services.AddTransient() //AddTransient - Transient w czasie zycia, ktore są tworzone za kazdym razem, gdy są wymagane z kontenera usług. I to działa dla lekkich, bezstanowych usług. (ten jest zwykle uwazany za zbyt krotki)  
+builder.Services.AddScoped<ITokenService, TokenService>(); //Uslugę te są tworzone raz na żądanie klienta, a kiedy mówimy o ządaniach, tak naprawdę mówimy tutaj o żądaniu HTTP.Jezeli User loguje się bedzie to liczone jako żądanie. Tak więc dla naszej usługi tokena, poniewaz chcemy, aby wygenerowała token, gdy to ządanie zostanie odebrane przez nasz kontroler API i wewnetrz nasszego kontrolera konta, kiedy uzyjemy wstrzykniecie zaleznosci, bedziemy wstrzykiwać tutaj naszą usługę tokena. Tak więc żadanie przychodzi do punktu końcowego rejestracji lub logowania Zostaje utworzona nasza nowa usluga. 
+
 
 var app = builder.Build(); 
 

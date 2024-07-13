@@ -1,16 +1,16 @@
 ﻿using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API;
+namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]// api/users - aby uzyskac dostęp do punktow kocnowych w kontrollerze. Urzytkownik biedzie przegladał localhost 5001, a następnie użytkownicy zostaną przekierowany do tego kontrolera i znajdujący się w nim punktów końcowych 
-public class UsersController(DataContext context) : ControllerBase //dzidziczenia bazowego kontrollera
+public class UsersController(DataContext context) : BaseApiController
 {
-    //Metoda do zwracania odpowiedzi HTTP  do klienta 
-    [HttpGet] //Ządania HTTP Get 
+   [AllowAnonymous]
+   //Metoda do zwracania odpowiedzi HTTP  do klienta 
+   [HttpGet] //Ządania HTTP Get 
    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers() /*publiczna metoda.
 
                                                          Result action - jako typ rzeczy, ktore zamierzamy zwrocic z tego  punktu koncowego API
@@ -23,6 +23,7 @@ public class UsersController(DataContext context) : ControllerBase //dzidziczeni
    }
 
 
+   [Authorize]
    //W tym przypadku chcemy uzysjac indywidualnego uzytkownaka
    //oprocz user'a API, chelibysmy wiedzic id user'a np w URL musi byc cos  takiego
    [HttpGet("{id:int}")]  //np w URL musi byc cos  takiego - api/user/1 //:int - to jest bezpeczenstwo typu i okreslic ograniczenie - mowi nam ze nasz identyfikator biedzie typu integer.  

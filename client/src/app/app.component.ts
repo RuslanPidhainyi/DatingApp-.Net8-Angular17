@@ -2,11 +2,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavComponent } from "./nav/nav.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],//imports: [RouterOutlet, NgFor], - NgFor - iteruję nam liste ale mozemy wykorzystac zwyklego for'a
+  imports: [RouterOutlet, NavComponent],//imports: [RouterOutlet, NgFor], - NgFor - iteruję nam liste ale mozemy wykorzystac zwyklego for'a
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

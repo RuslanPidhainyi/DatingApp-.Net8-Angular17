@@ -7,24 +7,44 @@
         <a class="nav-link">Mathces</a>
       </li>
       <li class="nav-item">
-         <a class="nav-link">Lists</a>
-       </li>
-       <li class="nav-item">
-         <a class="nav-link">Massages</a>
-       </li>
+        <a class="nav-link">Lists</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link">Massages</a>
+      </li>
     </ul>
 
-    <form class="d-flex">
+
+   <!--Dzieki formularza i jego w srodku funkcionalnosci widzimy ze mamy dane wyjsciowe tego, co user wprowadzil do tych danych (username and password)-->
+   
+   <!--
+   #loginForm="ngForm" //Mowi formularzowi ze jest typem - formularza ng
+   (ngSubmit)="login()" //Nadaje formularzowi funkcje przesylania ng  
+    -->
+    <form
+      #loginForm="ngForm"
+      (ngSubmit)="login()"
+      class="d-flex"
+      autocomplete="off"
+    >
+    <!-- 
+   name="username"              //nazwe danych wejscowych
+   [(ngModel)]="model.username"  //ModelNg ktory przekeruje nas do modulu i jest properties
+    -->
       <input
+        name="username" 
+        [(ngModel)]="model.username"
         class="form-control me-2"
         type="text"
         placeholder="Username"
       />
-      <input
-      class="form-control me-2"
-      type="password"
-      placeholder="Password"
-    />
+      <input 
+         name="password"
+         [(ngModel)]="model.password"
+         class="form-control me-2" 
+         type="password" 
+         placeholder="Password" 
+      />
       <button class="btn btn-outline-success" type="submit">Login</button>
     </form>
   </div>

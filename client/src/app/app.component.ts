@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavComponent } from "./nav/nav.component";
+import { AccountService } from './_services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -16,14 +17,27 @@ import { NavComponent } from "./nav/nav.component";
 export class AppComponent implements OnInit {
   //Kiedy chcemy uzyskac dostep do wlasciwosci class, musimy uzyc tego (czylic block kodu func ngOnInit):
   http = inject(HttpClient);
+  private accountService  = inject(AccountService)
   title = 'DatingApp';
   users: any;
 
 
   //ng on Init - wykonuje nasze wywołanie HTTP
   ngOnInit(): void {
+   this.getUsers();
+   this.setCurrentUser();
+  }
 
-    /*
+  setCurrentUser() {
+    const userString = localStorage.getItem('user');
+    if(!userString) return;//Jezeli nie mamy łancucha usera, nie mozemy z nim nic zrobic to wtedy wychodzi,y z tej metody
+
+    const user = JSON.parse(userString);
+    this.accountService.currentUser.set(user);
+  }
+
+  getUsers(){
+     /*
       Co robi nasz Kod, a dokladnie metoda get?
       
       Konstruuje więc żądanie Get, które interpretuje treść jako JSON i zwraca treść odpowiedzi jako obiekt parsowany z JSON

@@ -6,7 +6,7 @@
      
     Директива *ngIf зазвичай використовується в Angular-шаблонах для контролю видимості елементів. Якщо вираз всередині *ngIf оцінюється як true, елемент та його діти будуть включені в DOM; якщо оцінюється як false, елемент та його діти будуть видалені з DOM  -->
 
-    @if(loggedIn){
+    @if(accountService.currentUser()){
 
     <!-- <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="loggedIn"> -->
     <ul class="navbar-nav me-auto mb-2 mb-md-0">
@@ -22,7 +22,7 @@
     </ul>
     } 
 
-    @if(loggedIn){
+    @if(accountService.currentUser()){
       <div dropdown class="dropdown">
       <!-- a.dropdown-toggle.text-light -->
         <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">
@@ -37,7 +37,7 @@
       </div>
     }
     
-    @if(!loggedIn){
+    @if(!accountService.currentUser()){
 
     <!--Dzieki formularza i jego w srodku funkcionalnosci widzimy ze mamy dane wyjsciowe tego, co user wprowadzil do tych danych (username and password)-->
 

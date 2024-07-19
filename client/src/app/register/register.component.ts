@@ -1,4 +1,4 @@
-import { Component, input, Input } from '@angular/core';
+import { Component, EventEmitter, input, Input, output, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -13,7 +13,16 @@ export class RegisterComponent {
   //@Input() usersFromHomeComponent: any; //za pomocy dekorotywnego "input'u" i wlasciwosci "input'a", chcemy przekazac wlasciwosci ("users" w pliku "register.component.html") do komponentu podrzednego
 
   // drugi sposob - dziala z wersji 17.3^ //
-  usersFromHomeComponent= input.required<any>()
+  usersFromHomeComponent= input.required<any>();
+
+  /******************************************************************************************************** */
+
+  // pierwszy sposob //
+  //@Output() cancelRegister = new EventEmitter() //dekorator "@output()" czyli dekorator wyjsciowy - ktory bedzie cos robic i zaincjąwaliscmy EventEmitter - emiter zdarzen 
+
+  // drugi sposob - dziala z wersji 17.3^ //
+  cancelRegister = output<boolean>();
+
   model: any = {}
 
   register() {
@@ -21,6 +30,6 @@ export class RegisterComponent {
   }
 
   cancel() {
-    console.log("cancelled")
+    this.cancelRegister.emit(false); //kiedy klikamy na przycisk wewnetrz naszego komponentu podrzedniego emitujemy wartosc false 
   }
 }

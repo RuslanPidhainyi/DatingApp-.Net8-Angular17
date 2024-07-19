@@ -22,6 +22,10 @@ export class HomeComponent implements OnInit{
     this.registerMode = !this.registerMode
   }
 
+  cancelRegisterMode(event: boolean){
+    this.registerMode = event;
+  }
+
   getUsers(){
     /*
      Co robi nasz Kod, a dokladnie metoda get?

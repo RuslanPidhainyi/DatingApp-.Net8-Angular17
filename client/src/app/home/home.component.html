@@ -13,12 +13,11 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-4">
-                        <!-- pierwszy sposob -->
-                       <!-- <app-register [usersFromHomeComponent]="users"></app-register> -->
-
-                       <!-- drugi sposob - dziala z wersji 17.3^ -->
-                        <app-register 
+                        <!-- <app-register 
                             [usersFromHomeComponent]="users"
+                            (cancelRegister)="cancelRegisterMode($event)" 
+                        ></app-register> -->
+                        <app-register 
                             (cancelRegister)="cancelRegisterMode($event)" 
                         ></app-register>
                         <!-- (cancelRegister)="cancelRegisterMode($event)"  - wprowodzamy to co robimy tutaj i wywojemy func wewnątrz naszego komponentu nadrzednego, aby anulować tryb -->

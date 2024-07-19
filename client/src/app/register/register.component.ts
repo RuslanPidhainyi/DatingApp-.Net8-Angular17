@@ -1,5 +1,6 @@
-import { Component, EventEmitter, input, Input, output, Output } from '@angular/core';
+import { Component, EventEmitter, inject, input, Input, output, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AccountService } from '../_services/account.service';
 
 @Component({
   selector: 'app-register',
@@ -9,11 +10,14 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
+
+  private accountService = inject(AccountService);
+
   // pierwszy sposob //
   //@Input() usersFromHomeComponent: any; //za pomocy dekorotywnego "input'u" i wlasciwosci "input'a", chcemy przekazac wlasciwosci ("users" w pliku "register.component.html") do komponentu podrzednego
 
   // drugi sposob - dziala z wersji 17.3^ //
-  usersFromHomeComponent= input.required<any>();
+  //usersFromHomeComponent= input.required<any>();
 
   /******************************************************************************************************** */
 
@@ -26,7 +30,13 @@ export class RegisterComponent {
   model: any = {}
 
   register() {
-    console.log(this.model);
+    this.accountService.register(this.model).subscribe({
+      next: response => {
+        console.log(response);
+        this.cancel();
+      },
+      error: error => console.log(error),
+    })
   }
 
   cancel() {

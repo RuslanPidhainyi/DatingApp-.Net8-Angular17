@@ -13,7 +13,11 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-4">
-                       <app-register></app-register>
+                        <!-- pierwszy sposob -->
+                       <!-- <app-register [usersFromHomeComponent]="users"></app-register> -->
+
+                       <!-- drugi sposob - dziala z wersji 17.3^ -->
+                        <app-register [usersFromHomeComponent]="users"></app-register>
                     </div>
                 </div>
             </div>

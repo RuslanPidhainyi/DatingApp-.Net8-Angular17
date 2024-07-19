@@ -1,0 +1,76 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="#">Dating App</a>
+
+    <!-- *ngIf="loggedIn" - це директива Angular, яка використовується для умовного включення або виключення елемента в DOM на основі значення виразу. Це структурна директива, яка додає або видаляє частину дерева DOM.
+     
+    Директива *ngIf зазвичай використовується в Angular-шаблонах для контролю видимості елементів. Якщо вираз всередині *ngIf оцінюється як true, елемент та його діти будуть включені в DOM; якщо оцінюється як false, елемент та його діти будуть видалені з DOM  -->
+
+    @if(accountService.currentUser()){
+
+    <!-- <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="loggedIn"> -->
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item">
+        <a class="nav-link">Mathces</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link">Lists</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link">Massages</a>
+      </li>
+    </ul>
+    } 
+
+    @if(accountService.currentUser()){
+      <div dropdown class="dropdown">
+      <!-- a.dropdown-toggle.text-light -->
+        <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">
+          Welcome user
+        </a>
+
+        <div *dropdownMenu class="dropdown-menu">
+          <a class="dropdown-item">Edit profile</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" (click)="logout()">Logout</a>
+        </div>
+      </div>
+    }
+    
+    @if(!accountService.currentUser()){
+
+    <!--Dzieki formularza i jego w srodku funkcionalnosci widzimy ze mamy dane wyjsciowe tego, co user wprowadzil do tych danych (username and password)-->
+
+    <!--
+   #loginForm="ngForm" //Mowi formularzowi ze jest typem - formularza ng
+   (ngSubmit)="login()" //Nadaje formularzowi funkcje przesylania ng  
+    -->
+    <form
+      #loginForm="ngForm"
+      (ngSubmit)="login()"
+      class="d-flex"
+      autocomplete="off"
+    >
+      <!-- 
+   name="username"              //nazwe danych wejscowych
+   [(ngModel)]="model.username"  //ModelNg ktory przekeruje nas do modulu i jest properties
+    -->
+      <input
+        name="username"
+        [(ngModel)]="model.username"
+        class="form-control me-2"
+        type="text"
+        placeholder="Username"
+      />
+      <input
+        name="password"
+        [(ngModel)]="model.password"
+        class="form-control me-2"
+        type="password"
+        placeholder="Password"
+      />
+      <button class="btn btn-outline-success" type="submit">Login</button>
+    </form>
+  }
+  </div>
+</nav>

@@ -16,7 +16,7 @@ import { HomeComponent } from "./home/home.component";
 //implements OnInit - Oczekuje od nas utworzenia func o nazwie ng on init, w ktorej moze wykonywac kod wymagania w tym konkretnym zdarzeniu cykl zycia 
 export class AppComponent implements OnInit {
   //Kiedy chcemy uzyskac dostep do wlasciwosci class, musimy uzyc tego (czylic block kodu func ngOnInit):
-  private accountService  = inject(AccountService);
+  private accountService  = inject(AccountService);//To jest Wstrzykiwania zaleznosci
 
   //ng on Init - wykonuje nasze wywołanie HTTP
   ngOnInit(): void {

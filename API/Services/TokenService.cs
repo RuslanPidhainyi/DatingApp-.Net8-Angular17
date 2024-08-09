@@ -10,8 +10,9 @@ namespace API.Services;
 public class TokenService(IConfiguration config) : ITokenService
 {
    public string CreateToken(AppUser user)
-   {
-      var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot access tokenKey from appsettings"); //?? - jezeli null to zrob cos
+   {  
+      //Nasz klucz ktory jest wlasciwoscio "TokenKey"
+      var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot access tokenKey from appsettings"); //?? - jezeli null to zrob cos (w moim wypadku mam Exception)
       if(tokenKey.Length < 64) throw new Exception("Your tokenKey needs to be longer");
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));//Teraz nasz token będzie zawierał informacje o użytkowniku
@@ -30,20 +31,20 @@ public class TokenService(IConfiguration config) : ITokenService
          new Claim(ClaimTypes.NameIdentifier, user.UserName)
       };
 
-      var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+      var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);//Haszowania 512 algorytm ktory sluzy do podpisywania naszego klucza -  part signature/ czesc Podpis klucza
 
       //opis tokena
       var tokenDescriptor = new SecurityTokenDescriptor
       {
-         Subject = new ClaimsIdentity(claims),
-         Expires = DateTime.UtcNow.AddDays(7),
-         SigningCredentials = creds
+         Subject = new ClaimsIdentity(claims), //Nasze nowy padmioty/temy zotsną zrownane z nową tozsamoscią rozszezen/claims, nastepnie przekaze nasze rozszezen/claims jako parametry
+         Expires = DateTime.UtcNow.AddDays(7), //Data wygaszania 
+         SigningCredentials = creds //Signature/Podpis
       };
 
       //Obsugę tokenów 
-      var tokenHandler = new JwtSecurityTokenHandler();
-      var token = tokenHandler.CreateToken(tokenDescriptor);
+      var tokenHandler = new JwtSecurityTokenHandler();// sluzy do zapisaniu naszego tokena 
+      var token = tokenHandler.CreateToken(tokenDescriptor);//tworzymy nasz token i przekazujemy mu tokenDescriptor/ Opis tokena
 
-      return tokenHandler.WriteToken(token);
+      return tokenHandler.WriteToken(token); //zapisujemy token w odpowieDZ i zwracamy token 
    }
 }

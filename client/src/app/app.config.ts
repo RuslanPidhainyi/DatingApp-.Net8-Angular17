@@ -7,7 +7,7 @@ import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes),//router
     provideHttpClient(), //wstrzykiwania zaleznosci (injection)
     provideAnimations()
   ]

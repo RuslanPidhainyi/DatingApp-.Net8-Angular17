@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit{
 
    // W ten sposob uzyskujemy dostęp do wlasciwosci klasy
    this.http.get('https://localhost:5001/api/users').subscribe({
-     //func
+     //func //otrzymujemy respons czyli odpowiedz z nazego API
      next: response => this.users = response,
 
      //Co biedzie jezeli wystąpi błąd

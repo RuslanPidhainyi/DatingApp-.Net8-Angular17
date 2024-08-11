@@ -33,7 +33,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
       await context.SaveChangesAsync();//zapisujemy zmiany do bd, (czyli stworzenego user'a) - zapisywane zmiany w EF
 
       //return user; // po zapisaniu naszego user'a w bd mozemy zwrocic user'a, ktorego wlasnie utworzylismy 
-
+      //Ale tutaj nie zwracamy juz user'a, a zwracamy nowe DTO uzytkownika
       return new UserDto
       {
          Username = user.UserName,
@@ -47,6 +47,18 @@ public class AccountController(DataContext context, ITokenService tokenService) 
       var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower()); //FirstOrDefaultAsync - abo wysli nam object ktore spewnia kryteria lub zwroci "null" 
       //x.UserName - okreslilismy ze nasze names' user'y będą konvertowane na male litery w naszej BD
       //loginDto.Username.ToLower() dla czego zrobilismy konwertacje na male, aby dopasowac podobne do podobnych
+
+      /*
+         Rorwniez mozemy uzyć:
+         
+         .Where - jesli chcemy uzyc liste userow spelniajacych okreslone kryteria  
+
+         .FirstOrDefaultAsync - jesli uzyjemy tego, to jesli uzytkownik nie zostanie znaleziony, zwroci wartosc domyslną, jesli ten uzytkownik nie zostanie znalezony w naszej bd.
+         Domyslana wartosc w tym przypadku bedzie null,  jesli uzytkowni nie istnieje w naszej bd.   
+
+         .SingleOrDefaultAsync - mozemy uzyc pojedynczego, to znajdzie jedynego uzytkownika, ktory istnieje w bazie danych, ale jesli w naszej bd jest więcej niz jeden element, ktory pasuje, to ponownie rzuca wyjątek.
+      
+      */
 
       if(user == null) return Unauthorized("Invalid username");
 

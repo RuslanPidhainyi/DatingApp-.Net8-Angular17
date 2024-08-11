@@ -1,32 +1,35 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
   <div class="container">
-    <a class="navbar-brand" href="#">Dating App</a>
+    <a class="navbar-brand" routerLinkActive="active" routerLink='/'>Dating App</a>
 
     <!-- *ngIf="loggedIn" - це директива Angular, яка використовується для умовного включення або виключення елемента в DOM на основі значення виразу. Це структурна директива, яка додає або видаляє частину дерева DOM.
      
     Директива *ngIf зазвичай використовується в Angular-шаблонах для контролю видимості елементів. Якщо вираз всередині *ngIf оцінюється як true, елемент та його діти будуть включені в DOM; якщо оцінюється як false, елемент та його діти будуть видалені з DOM  -->
 
-    @if(accountService.currentUser()){
+   
+    
 
     <!-- <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="loggedIn"> -->
     <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a class="nav-link">Mathces</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link">Lists</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link">Massages</a>
-      </li>
+      @if(accountService.currentUser()){
+        <li class="nav-item">
+          <a routerLink="/members" routerLinkActive="active" class="nav-link">Mathces</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/lists" routerLinkActive="active" class="nav-link">Lists</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/messages" routerLinkActive="active" class="nav-link">Massages</a>
+        </li>
+      }
     </ul>
-    } 
+     
 
     @if(accountService.currentUser()){
       <div dropdown class="dropdown">
       <!-- a.dropdown-toggle.text-light -->
         <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">
-          Welcome user
+          Welcome {{accountService.currentUser()?.username | titlecase }}
         </a>
 
         <div *dropdownMenu class="dropdown-menu">
@@ -69,7 +72,7 @@
         type="password"
         placeholder="Password"
       />
-      <button class="btn btn-outline-success" type="submit">Login</button>
+      <button class="btn btn-success" type="submit">Login</button>
     </form>
   }
   </div>

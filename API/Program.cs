@@ -1,9 +1,9 @@
 //Ми можемо поділити цей плік на 2 секції - (Послуги)
-
 using System.Text;
 using API.Data;
 using API.Extensions;
 using API.Interfaces;
+using API.Middleware;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +17,10 @@ builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentetiService(builder.Configuration);
 
 var app = builder.Build(); 
+
+//app.UseDeveloperExceptionPage(); //To jest dla trybu developerskim
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(x => x.AllowAnyHeader()
 .AllowAnyMethod()

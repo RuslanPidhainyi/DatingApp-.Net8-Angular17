@@ -29,7 +29,25 @@ public class BuggyController(DataContext context) : BaseApiController
     [HttpGet("server-error")]
     public ActionResult<AppUser> GetServerError()
     {
-        var thing = context.Users.Find(-1) ?? throw new Exception("A bad thing has happened"); // Find(-1) a operator - null -"??" sprawdzi czy ma wartosci null, Jesli tak to wzuc wyjątek
+        // try
+        // {
+        //     // Find(-1) - Znajdzi z index -1
+        //     //  a operator - null -"??" sprawdza czy ma wartosci null, Jesli tak to wzuc wyjątek
+
+        //     var thing = context.Users.Find(-1) ?? throw new Exception("A bad thing has happened"); //Z najdz index -1 w w bd tabele User, a jesli wartosc ma null, to wzuc wyjątek
+
+        //     return thing;
+        // }
+        // catch (Exception ex)
+        // {
+        //     return StatusCode(500, "Computer says no!");
+        // }
+
+
+        // Find(-1) - Znajdzi z index -1
+        //  a operator - null -"??" sprawdza czy ma wartosci null, Jesli tak to wzuc wyjątek
+
+        var thing = context.Users.Find(-1) ?? throw new Exception("A bad thing has happened"); //Z najdz index -1 w w bd tabele User, a jesli wartosc ma null, to wzuc wyjątek
 
         return thing;
     }

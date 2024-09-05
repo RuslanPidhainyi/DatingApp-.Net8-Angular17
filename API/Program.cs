@@ -145,5 +145,3 @@ app.Run();
 // app.MapControllers(); //Opragromowania posredniczące do mapowania punktów końcowych kontrolera
 
 // app.Run();//Запускає нашу программу
-
-

@@ -18,27 +18,29 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
       //Ключове слово using у середині методу використовується для того, щоб вказати на те, що об'єкт, який створюється, повинен бути автоматично знищений після завершення блоку коду, в якому він використовується. Це допомагає звільнити ресурси, що використовуються об'єктом (наприклад, файли, мережеві з'єднання, потоки тощо).(а точніше, буде викликано його метод Dispose) 
 
-      using var hmac = new HMACSHA512();//algortmu do haszującego tekstu - robi szyfrowanie tekstu 
+      return Ok();//Tymczasowo!!!
 
-      var user = new AppUser
-      {
-         UserName = registerDto.Username.ToLower(), //do BD jest zapisane username mawymi leterammi
-         PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)), //ComputeHash - metoda pobiera tablice bajtów //Encoding.UTF8.GetBytes(password) - uzycie kodowanie tekstu czyli  utworzylismy tablice bajtów z haslem ktore podane przez User'a.
+      // using var hmac = new HMACSHA512();//algortmu do haszującego tekstu - robi szyfrowanie tekstu 
 
-         PasswordSalt = hmac.Key 
-         //Uzywamy sortowanie, aby zakodować już zaszyfrowany hash hasla - to bedzie zrobione dla tego a bys User'y uzywali takiego samego hasla to hash haslo rowniez był inny. Poniewasz jezeli nasza BD zostanie naruszona, kazdy uzytkownik bedzie miał inny skrót hasła(PasswordHash), nawet uzywają tego samego hasla
-      };
+      // var user = new AppUser
+      // {
+      //    UserName = registerDto.Username.ToLower(), //do BD jest zapisane username mawymi leterammi
+      //    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)), //ComputeHash - metoda pobiera tablice bajtów //Encoding.UTF8.GetBytes(password) - uzycie kodowanie tekstu czyli  utworzylismy tablice bajtów z haslem ktore podane przez User'a.
 
-      context.Users.Add(user);//przekazujemy do naszego context'a nowego User'a
-      await context.SaveChangesAsync();//zapisujemy zmiany do bd, (czyli stworzenego user'a) - zapisywane zmiany w EF
+      //    PasswordSalt = hmac.Key 
+      //    //Uzywamy sortowanie, aby zakodować już zaszyfrowany hash hasla - to bedzie zrobione dla tego a bys User'y uzywali takiego samego hasla to hash haslo rowniez był inny. Poniewasz jezeli nasza BD zostanie naruszona, kazdy uzytkownik bedzie miał inny skrót hasła(PasswordHash), nawet uzywają tego samego hasla
+      // };
 
-      //return user; // po zapisaniu naszego user'a w bd mozemy zwrocic user'a, ktorego wlasnie utworzylismy 
-      //Ale tutaj nie zwracamy juz user'a, a zwracamy nowe DTO uzytkownika
-      return new UserDto
-      {
-         Username = user.UserName,
-         Token = tokenService.CreateToken(user)  
-      };
+      // context.Users.Add(user);//przekazujemy do naszego context'a nowego User'a
+      // await context.SaveChangesAsync();//zapisujemy zmiany do bd, (czyli stworzenego user'a) - zapisywane zmiany w EF
+
+      // //return user; // po zapisaniu naszego user'a w bd mozemy zwrocic user'a, ktorego wlasnie utworzylismy 
+      // //Ale tutaj nie zwracamy juz user'a, a zwracamy nowe DTO uzytkownika
+      // return new UserDto
+      // {
+      //    Username = user.UserName,
+      //    Token = tokenService.CreateToken(user)  
+      // };
    }
 
    [HttpPost("login")] 

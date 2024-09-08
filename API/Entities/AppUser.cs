@@ -10,6 +10,8 @@ public class AppUser
    public byte[] PasswordSalt { get; set; } = [];//passSalt - zmieni nam nasz passHash, zrobione dlatego jezli user wpisze słabe chaslo
    public DateOnly DateOfBirth { get; set; }
    public required string KnownAs { get; set; }
+
+   //Format Daty "UTC" SQLite nie rozumiem! Rozumie np: PostqruesSQL
    public DateTime Created { get; set; } = DateTime.UtcNow;
    public DateTime LastActive { get; set; } = DateTime.UtcNow;
    public required string Gender { get; set; }

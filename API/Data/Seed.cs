@@ -41,12 +41,12 @@ public class Seed
         if (await context.Users.AnyAsync())
         {
             Console.WriteLine("Users already exist. Skipping seed.");
-            return;
+            return; //перевіряє, чи є вже користувачі в базі даних. Якщо є, метод виходить.
         }
 
         Console.WriteLine("Reading user data from JSON file...");
 
-        var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
+        var userData = await File.ReadAllTextAsync("Data/UserSeedData.json"); //Зчитування  початкових даних із файлу, здійснюється асинхронно за допомогою методу File.ReadAllTextAsync, що підвищує продуктивність програми.
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData, options);
@@ -70,6 +70,11 @@ public class Seed
             context.Users.Add(user);
             Console.WriteLine($"User {user.UserName} added.");
         }
+
+        /*
+        Ключове слово using тут використовується для автоматичного управління ресурсами. Це означає, що об'єкт, створений за допомогою using, буде автоматично звільнений після завершення його використання.
+        У даному випадку hmac — це екземпляр класу HMACSHA512, який реалізує інтерфейс IDisposable. Об'єкти, що реалізують IDisposable, вимагають виклику методу Dispose() після завершення їх використання для звільнення ресурсів, які вони займають (наприклад, пам'ять або системні ресурси).
+        */
 
         await context.SaveChangesAsync();
         Console.WriteLine("User seeding completed.");

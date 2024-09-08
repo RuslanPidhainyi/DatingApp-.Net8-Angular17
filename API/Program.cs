@@ -41,6 +41,7 @@ app.UseAuthorization();
 // Configure the HTTP request pipeline.
 app.MapControllers();
 
+//Wzorzec "Lokator usług" - aby uzyskać dostęp do usługi której chcemy użyć poza wstzrykiwaniem zaleznosci
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try

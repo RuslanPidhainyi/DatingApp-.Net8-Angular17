@@ -1,37 +1,45 @@
 ﻿using API.Data;
+using API.DTOs;
 using API.Entities;
+using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class UsersController(DataContext context) : BaseApiController
+[Authorize]
+public class UsersController(IUserRepository userRepository, IMapper mapper) : BaseApiController
 {
-   [AllowAnonymous]
    //Metoda do zwracania odpowiedzi HTTP  do klienta 
    [HttpGet] //Ządania HTTP Get 
-   public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers() /*publiczna metoda.
+   public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers() /*publiczna metoda.
 
                                                          Result action - jako typ rzeczy, ktore zamierzamy zwrocic z tego  punktu koncowego API
 
                                                          Następnie okreslamy typ  zwracanej rzeczy  - teraz zwrocimy liste użytkownikow (Istneje  wiele róznych  rodzajów list w C#, jedna z metod, ktorej mozemy do tego użyc jest enumarable - uzywane tylko dla kolekcji okreslonego typu) - zwrocimy IEnumereble typu appUser*/
    {
       //Stąd możemy zwracac odpowiedz HTTP
-      var users =  await context.Users.ToListAsync(); //w ten sposob otrzymamy liste user'ow z naszej bazy
-      return users;
+      var users =  await userRepository.GetUsersAsync(); //w ten sposob otrzymamy liste user'ow z naszej bazy
+
+      var usersToReturn = mapper.Map<IEnumerable<MemberDto>>(users);
+
+      return Ok(usersToReturn); //Ok - nie dba o to co umiescili. Bo to co umiscili nie jest az tak dobre, przez to ze uzywamy kolekcje "IEnumerable"
    }
 
 
-   [Authorize]
    //W tym przypadku chcemy uzysjac indywidualnego uzytkownaka
    //oprocz user'a API, chelibysmy wiedzic id user'a np w URL musi byc cos  takiego
-   [HttpGet("{id:int}")]  //np w URL musi byc cos  takiego - api/user/1 //:int - to jest bezpeczenstwo typu i okreslic ograniczenie - mowi nam ze nasz identyfikator biedzie typu integer.  
-   public async Task<ActionResult<AppUser>> GetUser(int id) 
+   //[HttpGet("{id:int}")]  //np w URL musi byc cos  takiego - api/user/1 //:int - to jest bezpeczenstwo typu i okreslic ograniczenie - mowi nam ze nasz identyfikator biedzie typu integer.  
+   
+   //[HttpGet("{username:string}")] //parametr trasy jest domyslnie stringiem
+   [HttpGet("{username}")]
+   public async Task<ActionResult<MemberDto>> GetUser(string username) 
    {
-      var user = await context.Users.FindAsync(id); 
+      var user = await userRepository.GetUserByUsernameAsync(username);
       if(user == null) return NotFound();   
-      return user;
+      return mapper.Map<MemberDto>(user);
    }
 
 }

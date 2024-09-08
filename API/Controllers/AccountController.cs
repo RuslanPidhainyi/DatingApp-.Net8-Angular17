@@ -13,35 +13,36 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 {
    [HttpPost("register")] //account/register
    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
-   {  
-      if(await UserExists(registerDto.Username)) return BadRequest("Username is taken");
+   {
+      if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
 
+      return Ok();
       //Ключове слово using у середині методу використовується для того, щоб вказати на те, що об'єкт, який створюється, повинен бути автоматично знищений після завершення блоку коду, в якому він використовується. Це допомагає звільнити ресурси, що використовуються об'єктом (наприклад, файли, мережеві з'єднання, потоки тощо).(а точніше, буде викликано його метод Dispose) 
 
-      using var hmac = new HMACSHA512();//algortmu do haszującego tekstu - robi szyfrowanie tekstu 
+      // using var hmac = new HMACSHA512();//algortmu do haszującego tekstu - robi szyfrowanie tekstu 
 
-      var user = new AppUser
-      {
-         UserName = registerDto.Username.ToLower(), //do BD jest zapisane username mawymi leterammi
-         PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)), //ComputeHash - metoda pobiera tablice bajtów //Encoding.UTF8.GetBytes(password) - uzycie kodowanie tekstu czyli  utworzylismy tablice bajtów z haslem ktore podane przez User'a.
+      // var user = new AppUser
+      // {
+      //    UserName = registerDto.Username.ToLower(), //do BD jest zapisane username mawymi leterammi
+      //    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)), //ComputeHash - metoda pobiera tablice bajtów //Encoding.UTF8.GetBytes(password) - uzycie kodowanie tekstu czyli  utworzylismy tablice bajtów z haslem ktore podane przez User'a.
 
-         PasswordSalt = hmac.Key 
-         //Uzywamy sortowanie, aby zakodować już zaszyfrowany hash hasla - to bedzie zrobione dla tego a bys User'y uzywali takiego samego hasla to hash haslo rowniez był inny. Poniewasz jezeli nasza BD zostanie naruszona, kazdy uzytkownik bedzie miał inny skrót hasła(PasswordHash), nawet uzywają tego samego hasla
-      };
+      //    PasswordSalt = hmac.Key 
+      //    //Uzywamy sortowanie, aby zakodować już zaszyfrowany hash hasla - to bedzie zrobione dla tego a bys User'y uzywali takiego samego hasla to hash haslo rowniez był inny. Poniewasz jezeli nasza BD zostanie naruszona, kazdy uzytkownik bedzie miał inny skrót hasła(PasswordHash), nawet uzywają tego samego hasla
+      // };
 
-      context.Users.Add(user);//przekazujemy do naszego context'a nowego User'a
-      await context.SaveChangesAsync();//zapisujemy zmiany do bd, (czyli stworzenego user'a) - zapisywane zmiany w EF
+      // context.Users.Add(user);//przekazujemy do naszego context'a nowego User'a
+      // await context.SaveChangesAsync();//zapisujemy zmiany do bd, (czyli stworzenego user'a) - zapisywane zmiany w EF
 
-      //return user; // po zapisaniu naszego user'a w bd mozemy zwrocic user'a, ktorego wlasnie utworzylismy 
-      //Ale tutaj nie zwracamy juz user'a, a zwracamy nowe DTO uzytkownika
-      return new UserDto
-      {
-         Username = user.UserName,
-         Token = tokenService.CreateToken(user)  
-      };
+      // //return user; // po zapisaniu naszego user'a w bd mozemy zwrocic user'a, ktorego wlasnie utworzylismy 
+      // //Ale tutaj nie zwracamy juz user'a, a zwracamy nowe DTO uzytkownika
+      // return new UserDto
+      // {
+      //    Username = user.UserName,
+      //    Token = tokenService.CreateToken(user)  
+      // };
    }
 
-   [HttpPost("login")] 
+   [HttpPost("login")]
    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
    {
       var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower()); //FirstOrDefaultAsync - abo wysli nam object ktore spewnia kryteria lub zwroci "null" 
@@ -60,22 +61,22 @@ public class AccountController(DataContext context, ITokenService tokenService) 
       
       */
 
-      if(user == null) return Unauthorized("Invalid username");
+      if (user == null) return Unauthorized("Invalid username");
 
       using var hmac = new HMACSHA512(user.PasswordSalt);
       var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));//pobieranie passworda
 
-      for(int i = 0; i < computedHash.Length; i++)
+      for (int i = 0; i < computedHash.Length; i++)
       {
-         if(computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
+         if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
       }
 
       return new UserDto
       {
          Username = user.UserName,
-         Token = tokenService.CreateToken(user)  
+         Token = tokenService.CreateToken(user)
       };
-   } 
+   }
 
    private async Task<bool> UserExists(string username)
    {

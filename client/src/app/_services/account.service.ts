@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../_models/user';
 import { map } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 //@Injectable - dekorator i mowi ze jest to wstrzykiwalne, co oznacza, ze jest to dekorator - ktory mowi ze mozemy uzyc tego komponentu lub servece i wstrzyknac ją do naszych komponentow  
 @Injectable({
@@ -10,7 +11,7 @@ import { map } from 'rxjs';
 export class AccountService {
   private http =  inject(HttpClient);
 
-  baseUrl = 'https://localhost:5001/api/'
+  baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null)//wartości się zmienia Sygnaly mogą zawierać dowolne wartości, od prymitywów po zlozone struktury danych. //Ja mam wartosc null
 
   login(model: any){

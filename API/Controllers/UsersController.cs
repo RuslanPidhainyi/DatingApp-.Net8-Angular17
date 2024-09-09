@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 [Authorize]
-public class UsersController(IUserRepository userRepository, IMapper mapper) : BaseApiController
+public class UsersController(IUserRepository userRepository) : BaseApiController
 {
    //Metoda do zwracania odpowiedzi HTTP  do klienta 
    [HttpGet] //Ządania HTTP Get 
@@ -21,11 +21,9 @@ public class UsersController(IUserRepository userRepository, IMapper mapper) : B
                                                          Następnie okreslamy typ  zwracanej rzeczy  - teraz zwrocimy liste użytkownikow (Istneje  wiele róznych  rodzajów list w C#, jedna z metod, ktorej mozemy do tego użyc jest enumarable - uzywane tylko dla kolekcji okreslonego typu) - zwrocimy IEnumereble typu appUser*/
    {
       //Stąd możemy zwracac odpowiedz HTTP
-      var users =  await userRepository.GetUsersAsync(); //w ten sposob otrzymamy liste user'ow z naszej bazy
+      var users =  await userRepository.GetMembersAsync(); //w ten sposob otrzymamy liste user'ow z naszej bazy
 
-      var usersToReturn = mapper.Map<IEnumerable<MemberDto>>(users);
-
-      return Ok(usersToReturn); //Ok - nie dba o to co umiescili. Bo to co umiscili nie jest az tak dobre, przez to ze uzywamy kolekcje "IEnumerable"
+      return Ok(users); //Ok - nie dba o to co umiescili. Bo to co umiscili nie jest az tak dobre, przez to ze uzywamy kolekcje "IEnumerable"
    }
 
 
@@ -37,9 +35,9 @@ public class UsersController(IUserRepository userRepository, IMapper mapper) : B
    [HttpGet("{username}")]
    public async Task<ActionResult<MemberDto>> GetUser(string username) 
    {
-      var user = await userRepository.GetUserByUsernameAsync(username);
+      var user = await userRepository.GetMemberAsync(username);
       if(user == null) return NotFound();   
-      return mapper.Map<MemberDto>(user);
+      return user;
    }
 
 }

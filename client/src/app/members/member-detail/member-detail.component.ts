@@ -2,11 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MembersService } from '../../_services/members.service';
 import { ActivatedRoute } from '@angular/router';
 import { Member } from '../../_models/member';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-member-detail',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './member-detail.component.html',
   styleUrl: './member-detail.component.css',
 })
@@ -16,7 +17,7 @@ export class MemberDetailComponent implements OnInit {
   member?: Member;
 
   ngOnInit(): void {
-    this.loadMember()
+    this.loadMember();
   }
 
   loadMember() {
@@ -24,7 +25,7 @@ export class MemberDetailComponent implements OnInit {
     if (!username) return;
 
     this.memberService.getMember(username).subscribe({
-      next: member => this.member = member,
-    });
-  } 
+      next: (member) => (this.member = member),
+    }); 
+  }
 }

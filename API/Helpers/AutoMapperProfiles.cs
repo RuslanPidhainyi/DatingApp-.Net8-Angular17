@@ -29,7 +29,33 @@ public class AutoMapperProfiles : Profile // Profile належить біблі
         .ForMember(d => d .Age, o => o.MapFrom(s => s.DateOfBirth.CalculateAge()))
         .ForMember(d => d.PhotoUrl, 
                 o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain)!.Url));
-        //Цей блок налаштовує мапінг між об'єктами типу Photo (сутність користувача в базі даних) та PhotoDto (об'єкт для передачі даних).
         CreateMap<Photo, PhotoDto>();
     }
 }
+
+/*
+
+  // CreateMap<AppUser, MemberDto>()
+  // .ForMember(d => d .Age, o => o.MapFrom(s => s.DateOfBirth.CalculateAge()))
+  // .ForMember(d => d.PhotoUrl, 
+  //         o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain)!.Url));
+  // CreateMap<Photo, PhotoDto>();
+
+  
+  //CreateMap<AppUser, MemberDto>()
+  
+  1) tworzenia mapping -  z AppUser do MemberDto
+
+  // .ForMember(d => d.PhotoUrl, 
+  //         o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain)!.Url));
+  
+  2).ForMember(d => d.PhotoUrl, - dla wlasciwosci wewnetrzna czwlonka MemberDto
+
+  3)o => o.MapFrom(s => s.Photos - tutaj mowimy chcemy mapować z Photos (dla wlasciwosci wewnetrzna czwlonka AppUser)
+
+  4)FirstOrDefault(x => x.IsMain)!.Url)); - pierwszyj lub def, mowimy ze chcemy uzyskac IsMain ktory jest czlonkiem Photo
+
+    4.1) !.Url)); - ustawilismy URL zdjecia na wartosc null, aby pomijąć bledy
+
+
+*/

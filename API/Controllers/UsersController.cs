@@ -1,4 +1,5 @@
-﻿using API.Data;
+﻿using System.Security.Claims;
+using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 [Authorize]
-public class UsersController(IUserRepository userRepository) : BaseApiController
+public class UsersController(IUserRepository userRepository, IMapper mapper) : BaseApiController
 {
    //Metoda do zwracania odpowiedzi HTTP  do klienta 
    [HttpGet] //Ządania HTTP Get 
@@ -38,6 +39,24 @@ public class UsersController(IUserRepository userRepository) : BaseApiController
       var user = await userRepository.GetMemberAsync(username);
       if(user == null) return NotFound();   
       return user;
+   }
+
+   [HttpPut]
+   public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+   {
+      var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;//Pobieramy use'a ktory jest zalogowany(obecnie)
+
+      if(username == null) return BadRequest("No username found in token");
+
+      var user = await userRepository.GetUserByUsernameAsync(username);//Pobieramy naszego usera z Repository
+
+      if(user is null) return BadRequest("Could not found user");
+
+      mapper.Map(memberUpdateDto, user);//Func mapowania bierze naszą memberUpdateDto, która zawiera w siebie rozne wlasciwosci
+
+      if(await userRepository.SaveAllASync()) return NoContent(); //Sprawdza ile zmian zostawo zapisano w bd to wysyla - NoContent() 204, W przeciwnym przepadku jezeli tak samo, czyli nic nie zmienilismy wysli BadRequest("Failed to update the user");
+
+      return BadRequest("Failed to update the user");
    }
 
 }

@@ -13,16 +13,16 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<MemberDto?> GetMemberAsync(string username)
     {
         return await context.Users
-        .Where(x => x.UserName == username)
-        .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-        .SingleOrDefaultAsync();
+        .Where(x => x.UserName == username)//Використовує LINQ-запит для пошуку користувача з бази даних (_context.Users), де UserName відповідає значенню username.
+        .ProjectTo<MemberDto>(mapper.ConfigurationProvider)// Перетворює\проеціює знайдений об'єкт User на MemberDto за допомогою конфігурації AutoMapper.
+        .SingleOrDefaultAsync();//асинхронно повертає єдиний об'єкт або null, якщо об'єкт не знайдено.
     }
 
     public async Task<IEnumerable<MemberDto>> GetMembersAsync()
     {
         return await context.Users
         .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-        .ToListAsync();
+        .ToListAsync(); // асинхронно повертає всі результати у вигляді списку.
     }
 
     public async Task<AppUser?> GetUserByIdAsync(int id)
@@ -33,7 +33,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     public async Task<AppUser?> GetUserByUsernameAsync(string username)
     {
         return await context.Users
-        .Include(x => x.Photos)
+        .Include(x => x.Photos)//включає навігаційну властивість Photos, щоб завантажити дані про фотографії користувача разом з основними даними.
         .SingleOrDefaultAsync(x => x.UserName == username);
     }
 
@@ -53,4 +53,11 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     {
         context.Entry(user).State = EntityState.Modified;
     }
+
+    /*
+    Ціль: Оновити інформацію про користувача.
+    Кроки виконання:
+        Змінює стан об'єкта user на Modified, щоб позначити, що він був змінений.
+        Зміни будуть збережені при наступному виклику SaveChanges або SaveChangesAsync.
+    */
 }

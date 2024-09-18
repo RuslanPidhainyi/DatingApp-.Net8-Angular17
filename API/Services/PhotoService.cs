@@ -16,6 +16,8 @@ public class PhotoService : IPhotoService
 
         _coudinary = new Cloudinary(acc);
     }
+
+
     public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
     {
         var uploadResult = new ImageUploadResult(); //zmienna - do przychowywania wynikow przesyłania obrazów

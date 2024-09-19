@@ -4,51 +4,54 @@ import { User } from '../_models/user';
 import { map } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-//@Injectable - dekorator i mowi ze jest to wstrzykiwalne, co oznacza, ze jest to dekorator - ktory mowi ze mozemy uzyc tego komponentu lub servece i wstrzyknac ją do naszych komponentow  
+//@Injectable - dekorator i mowi ze jest to wstrzykiwalne, co oznacza, ze jest to dekorator - ktory mowi ze mozemy uzyc tego komponentu lub servece i wstrzyknac ją do naszych komponentow
 @Injectable({
-  providedIn: 'root'//jest on dostarczany w katalogu glownym naszej aplikacji i z uslugami // Це робить сервіс доступним в усьому додатку. 
+  providedIn: 'root', //jest on dostarczany w katalogu glownym naszej aplikacji i z uslugami // Це робить сервіс доступним в усьому додатку.
 })
 export class AccountService {
-  private http =  inject(HttpClient);// Інжектуємо HttpClient для здійснення HTTP-запитів.
+  private http = inject(HttpClient); // Інжектуємо HttpClient для здійснення HTTP-запитів.
 
-  baseUrl = environment.apiUrl;  // Встановлюємо базовий URL API з файлу конфігурації середовища.
-  currentUser = signal<User | null>(null)
+  baseUrl = environment.apiUrl; // Встановлюємо базовий URL API з файлу конфігурації середовища.
+  currentUser = signal<User | null>(null);
 
-  login(model: any){
-    return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(// post<User> - musimy zaznaczyć nasz obiekt User, zebys moglibysmy skorzystac z signala.(Bez tego nie da się)
+  login(model: any) {
+    return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
+      // post<User> - musimy zaznaczyć nasz obiekt User, zebys moglibysmy skorzystac z signala.(Bez tego nie da się)
 
       //return this.http.post<User>(this.baseUrl + 'account/login', model).pipe( - ", model" model po przeczynku oznacza to ze "Nastepnie wyslemy nazwe uzytkownika i haslo jako obiekt ktory bedzie czescią tresco HTTP"
-      
+
       //map - operator "map" - ktory otzrymujemu z RxJS i to pomoge nam przekształcic lub zrobic cos z odpowiedzia zwrotną ktora otrzymamu z naszego API
 
       //map(user => - czyli user zwraca dane usera z naszego API
-      map(user => {
-        if(user){
-          localStorage.setItem('user', JSON.stringify(user));//konwertujemy w zapis JSON i zapisujemy w localStorege
-          this.currentUser.set(user);//ustawiamy sygnal na Userze
+      map((user) => {
+        if (user) {
+          this.setCurrentUser(user);
         }
       })
-    )
+    );
   }
 
-  register(model: any){
+  register(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
-      map(user => {
-        if(user){
-          localStorage.setItem('user', JSON.stringify(user));
-          this.currentUser.set(user);  
+      map((user) => {
+        if (user) {
+          this.setCurrentUser(user);
         }
         return user;
       })
-    )
+    );
+  }
+
+  setCurrentUser(user: User) {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUser.set(user);
   }
 
   logout() {
-    localStorage.removeItem('user');
-    this.currentUser.set(null);
+    localStorage.removeItem('user'); //konwertujemy w zapis JSON i zapisujemy w localStorege
+    this.currentUser.set(null); //ustawiamy sygnal na Userze
   }
 }
-
 
 /*
 //currentUser = signal<User | null>(null);

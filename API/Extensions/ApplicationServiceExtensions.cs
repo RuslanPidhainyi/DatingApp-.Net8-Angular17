@@ -36,9 +36,12 @@ public static class ApplicationServiceExtensions
       //IUserRepository, UserRepository — інтерфейс IUserRepository і його реалізація UserRepository, яка використовується для роботи з даними користувачів.
       services.AddScoped<IUserRepository, UserRepository>();
 
+      services.AddScoped<IPhotoService, PhotoService>();
 
      //Додає AutoMapper до контейнера служб і автоматично завантажує всі конфігурації маппінгу, що визначені в поточному додатку. Це дозволяє легко використовувати AutoMapper для перетворення об'єктів між різними типами.
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //Zarejestrowalismy AutoMapper
+
+      services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
 
       return services;//Метод повертає колекцію служб після того, як всі необхідні служби були додані до контейнера.
    }

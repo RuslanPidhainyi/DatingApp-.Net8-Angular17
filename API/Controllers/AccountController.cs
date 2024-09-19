@@ -45,7 +45,10 @@ public class AccountController(DataContext context, ITokenService tokenService) 
    [HttpPost("login")]
    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
    {
-      var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower()); //FirstOrDefaultAsync - abo wysli nam object ktore spewnia kryteria lub zwroci "null" 
+      var user = await context.Users
+      .Include(p => p.Photos)
+         .FirstOrDefaultAsync(x => 
+            x.UserName == loginDto.Username.ToLower()); //FirstOrDefaultAsync - abo wysli nam object ktore spewnia kryteria lub zwroci "null" 
       //x.UserName - okreslilismy ze nasze names' user'y będą konvertowane na male litery w naszej BD
       //loginDto.Username.ToLower() dla czego zrobilismy konwertacje na male, aby dopasowac podobne do podobnych
 
@@ -74,7 +77,8 @@ public class AccountController(DataContext context, ITokenService tokenService) 
       return new UserDto
       {
          Username = user.UserName,
-         Token = tokenService.CreateToken(user)
+         Token = tokenService.CreateToken(user),
+         PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
       };
    }
 

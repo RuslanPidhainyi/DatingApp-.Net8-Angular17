@@ -23,6 +23,7 @@ import { ToastrService } from 'ngx-toastr';
 import { JsonPipe, NgIf } from '@angular/common';
 import { TextInputComponent } from '../_forms/text-input/text-input.component';
 import { DatePickerComponent } from "../_forms/date-picker/date-picker.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -34,7 +35,7 @@ import { DatePickerComponent } from "../_forms/date-picker/date-picker.component
 export class RegisterComponent implements OnInit {
   private accountService = inject(AccountService);
   private fb = inject(FormBuilder);
-  private toaster = inject(ToastrService);
+  private router = inject(Router);
 
   // pierwszy sposob //
   //@Input() usersFromHomeComponent: any; //za pomocy dekorotywnego "input'u" i wlasciwosci "input'a", chcemy przekazac wlasciwosci ("users" w pliku "register.component.html") do komponentu podrzednego
@@ -49,10 +50,9 @@ export class RegisterComponent implements OnInit {
 
   // drugi sposob - dziala z wersji 17.3^ //
   cancelRegister = output<boolean>();
-
-  model: any = {};
   registerForm: FormGroup = new FormGroup({});
   maxDate = new Date();
+  validationErrors: string[] | undefined;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -93,17 +93,20 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    console.log(this.registerForm.value);
-    // this.accountService.register(this.model).subscribe({
-    //   next: response => {
-    //     console.log(response);
-    //     this.cancel();
-    //   },
-    //   error: error => this.toaster.error(error.error),
-    // })
+    const dob = this.getDateOnly(this.registerForm.get('dateOfBirth')?.value);
+    this.registerForm.patchValue({dateOfBirth: dob});
+    this.accountService.register(this.registerForm.value).subscribe({
+      next: _ => this.router.navigateByUrl('/members'),
+      error: error => this.validationErrors = error,
+    })
   }
 
   cancel() {
     this.cancelRegister.emit(false); //kiedy klikamy na przycisk wewnetrz naszego komponentu podrzedniego emitujemy wartosc false
+  }
+
+  private getDateOnly(dob: string | undefined) {
+    if(!dob) return;
+    return new Date(dob).toISOString().slice(0, 10)
   }
 }

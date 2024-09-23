@@ -10,7 +10,7 @@ import { TitleCasePipe } from '@angular/common';
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [FormsModule, BsDropdownModule, RouterLink, RouterLinkActive, TitleCasePipe], //importujemy tutaj rozne dodatke do naszego projektu (np.FormsModule lub derektywe angulara "NgIf" )
+  imports: [FormsModule, BsDropdownModule, RouterLink, RouterLinkActive], //importujemy tutaj rozne dodatke do naszego projektu (np.FormsModule lub derektywe angulara "NgIf" )
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css'
 })

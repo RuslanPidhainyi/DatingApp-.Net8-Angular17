@@ -1,4 +1,5 @@
 ﻿using API.Data;
+using API.Helpers;
 using API.Interfaces;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,8 @@ public static class ApplicationServiceExtensions
       services.AddScoped<IUserRepository, UserRepository>();
 
       services.AddScoped<IPhotoService, PhotoService>();
+
+      services.AddScoped<LogUserActivity>();
 
      //Додає AutoMapper до контейнера служб і автоматично завантажує всі конфігурації маппінгу, що визначені в поточному додатку. Це дозволяє легко використовувати AutoMapper для перетворення об'єктів між різними типами.
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //Zarejestrowalismy AutoMapper

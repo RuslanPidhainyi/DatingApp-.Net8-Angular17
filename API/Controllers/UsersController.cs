@@ -23,6 +23,8 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
 
                                                          Następnie okreslamy typ  zwracanej rzeczy  - teraz zwrocimy liste użytkownikow (Istneje  wiele róznych  rodzajów list w C#, jedna z metod, ktorej mozemy do tego użyc jest enumarable - uzywane tylko dla kolekcji okreslonego typu) - zwrocimy IEnumereble typu appUser*/
    {
+      userParams.CurrentUsername = User.GetUsername();
+      
       //Stąd możemy zwracac odpowiedz HTTP
       var users = await userRepository.GetMembersAsync(userParams); //w ten sposob otrzymamy liste user'ow z naszej bazy
 

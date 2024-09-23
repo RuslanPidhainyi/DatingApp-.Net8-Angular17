@@ -28,7 +28,8 @@ public class TokenService(IConfiguration config) : ITokenService
       //Tojest standartna definicja claims/Twierdzenie o userze ich wewnętrz tokena
       var claims = new List<Claim>
       {
-         new Claim(ClaimTypes.NameIdentifier, user.UserName)
+         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+         new Claim(ClaimTypes.Name, user.UserName)
       };
 
       var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);//Haszowania 512 algorytm ktory sluzy do podpisywania naszego klucza -  part signature/ czesc Podpis klucza

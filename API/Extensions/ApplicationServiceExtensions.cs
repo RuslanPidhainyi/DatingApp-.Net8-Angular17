@@ -37,6 +37,8 @@ public static class ApplicationServiceExtensions
       //IUserRepository, UserRepository — інтерфейс IUserRepository і його реалізація UserRepository, яка використовується для роботи з даними користувачів.
       services.AddScoped<IUserRepository, UserRepository>();
 
+      services.AddScoped<ILikesRepository, LikesRepository>();
+
       services.AddScoped<IPhotoService, PhotoService>();
 
       services.AddScoped<LogUserActivity>();

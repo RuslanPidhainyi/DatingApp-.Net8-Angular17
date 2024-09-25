@@ -1,6 +1,7 @@
-import { Component, input, ViewEncapsulation } from '@angular/core';
+import { Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
 import { Member } from '../../_models/member';
 import { RouterLink } from '@angular/router';
+import { LikesService } from '../../_services/likes.service';
 
 @Component({
   selector: 'app-member-card',
@@ -11,5 +12,20 @@ import { RouterLink } from '@angular/router';
   //encapsulation: ViewEncapsulation.None //enkapsulaja naszych componentów w angularze - jest domyslana. Kazdy komponent ma swoj unikalny identyfikator, a CSS zostanie zawarty w tym componencie
 })
 export class MemberCardComponent {
+  private likeService = inject(LikesService);
   member = input.required<Member>();//input jest roszezenie Signala. Czyli musimy uzy jako sygnal
+  hasLiked = computed(() => this.likeService.likeIds().includes(this.member().id))
+
+  toggleLike() {
+    this.likeService.toggleLike(this.member().id).subscribe({
+      next: () => {
+        if(this.hasLiked()) {
+          this.likeService.likeIds.update(ids => ids.filter(x => x !== this.member().id))
+        }
+        else{
+          this.likeService.likeIds.update(ids => [...ids, this.member().id])
+        }
+      }
+    })
+  }
 }

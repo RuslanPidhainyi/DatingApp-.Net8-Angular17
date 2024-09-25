@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
     if(!userString) return;//Jezeli nie mamy łancucha usera, nie mozemy z nim nic zrobic to wtedy wychodzi,y z tej metody
 
     const user = JSON.parse(userString);
-    this.accountService.currentUser.set(user);
+    this.accountService.setCurrentUser(user);
   }
 
   

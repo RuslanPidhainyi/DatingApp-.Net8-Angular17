@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../_models/user';
 import { map } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { LikesService } from './likes.service';
 
 //@Injectable - dekorator i mowi ze jest to wstrzykiwalne, co oznacza, ze jest to dekorator - ktory mowi ze mozemy uzyc tego komponentu lub servece i wstrzyknac ją do naszych komponentow
 @Injectable({
@@ -10,7 +11,7 @@ import { environment } from '../../environments/environment';
 })
 export class AccountService {
   private http = inject(HttpClient); // Інжектуємо HttpClient для здійснення HTTP-запитів.
-
+  private likeService = inject(LikesService);
   baseUrl = environment.apiUrl; // Встановлюємо базовий URL API з файлу конфігурації середовища.
   currentUser = signal<User | null>(null);
 
@@ -45,6 +46,7 @@ export class AccountService {
   setCurrentUser(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
+    this.likeService.getLikeIds();
   }
 
   logout() {

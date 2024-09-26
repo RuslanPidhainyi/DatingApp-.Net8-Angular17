@@ -18,12 +18,12 @@ public class MessageRepository(DataContext context) : IMessageRepository
         context.Messages.Remove(message);
     }
 
-    public async Task<PagedList<MassageDto>> GetMassagesForUser()
+    public Task<PagedList<MessageDto>> GetMessagesForUser()
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<MassageDto>> GetMassagesThread(string currentUsername, string recipientUsername)
+    public Task<IEnumerable<MessageDto>> GetMessagesThread(string currentUsername, string recipientUsername)
     {
         throw new NotImplementedException();
     }

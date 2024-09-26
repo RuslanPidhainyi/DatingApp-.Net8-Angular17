@@ -33,7 +33,7 @@ public class AutoMapperProfiles : Profile // Profile належить біблі
         CreateMap<MemberUpdateDto, AppUser>();
         CreateMap<RegisterDto, AppUser>();
         CreateMap<string, DateOnly>().ConstructUsing(s => DateOnly.Parse(s));
-        CreateMap<Message, MassageDto>()
+        CreateMap<Message, MessageDto>()
           .ForMember(d => d.SenderPhotoUrl, 
                 o => o.MapFrom(s => s.Sender.Photos.FirstOrDefault(x => x.IsMain)!.Url))
           .ForMember(d => d.RecipientPhotoUrl, 

@@ -2,7 +2,7 @@ using System;
 
 namespace API.DTOs;
 
-public class MassageDto
+public class MessageDto
 {
     public int Id { get; set; }
     public int SenderId { get; set; }

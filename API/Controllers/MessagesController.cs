@@ -16,7 +16,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
         var username = User.GetUsername();
         if (username == createMessageDto.RecipientUsername.ToLower())
             return BadRequest("You cannot message yourself");
-        
+
         var sender = await userRepository.GetUserByUsernameAsync(username);
         var recipient = await userRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
         if (recipient == null || sender == null) return BadRequest("Cannot send message at this time");

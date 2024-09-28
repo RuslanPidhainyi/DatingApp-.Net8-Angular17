@@ -41,7 +41,7 @@ export class MessagesComponent implements OnInit {
 
   // deleteMessage(id: number) {
   //   this.messageService.deleteMessage(id).subscribe({
-  //     next: _ => {
+  //     next:  => {
   //       this.messageService.paginatedResult.update(prev => {
   //         if (prev && prev.items) {
   //           prev.items.splice(prev.items.findIndex(m => m.id === id), 1);
@@ -55,7 +55,7 @@ export class MessagesComponent implements OnInit {
 
   deleteMessages(id: number) {
     this.messageService.deleteMessage(id).subscribe({
-      next: ( ) => {
+      next: _ => {
         this.messageService.paginatedResult.update((prev) => {
           if (prev && prev.items) {
             prev.items.splice(
@@ -67,7 +67,7 @@ export class MessagesComponent implements OnInit {
           return prev;
         });
       },
-    });
+    }); 
   }
 
   getRoute(message: Message) {

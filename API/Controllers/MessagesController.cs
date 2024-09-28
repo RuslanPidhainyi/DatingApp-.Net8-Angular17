@@ -65,7 +65,7 @@ public class MessagesController(IMessageRepository messageRepository, IUserRepos
 
         if(message == null ) return BadRequest("Cannot delete this message");
 
-        if(message.SenderUsername != username || message.RecipientUsername != username) return Forbid();
+        if(message.SenderUsername != username && message.RecipientUsername != username) return Forbid();
 
         if(message.SenderUsername == username ) message.SenderDeleted = true;
         if(message.RecipientUsername == username ) message.RecipientDeleted = true;

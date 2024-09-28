@@ -46,6 +46,6 @@ export class MessageService {
   }
 
   deleteMessage(id: number) {
-    this.http.delete(this.baseUrl + 'messages/' + id);
+    return this.http.delete(this.baseUrl + 'messages/' + id);
   }
 }

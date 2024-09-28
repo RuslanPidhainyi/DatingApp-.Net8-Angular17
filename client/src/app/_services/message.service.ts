@@ -3,7 +3,10 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { PaginatedResult } from '../_models/pagination';
 import { Message } from '../_models/message';
-import { setPaginatedResponse, setPaginationHeaders } from './paginationHelpers';
+import {
+  setPaginatedResponse,
+  setPaginationHeaders,
+} from './paginationHelpers';
 
 @Injectable({
   providedIn: 'root',
@@ -18,19 +21,31 @@ export class MessageService {
 
     params = params.append('Container', container);
 
-    return this.http.get<Message[]>(this.baseUrl + 'messages', {
-      observe: 'response',
-      params,
-    }).subscribe({
-        next: response => setPaginatedResponse(response, this.paginatedResult)
-    })
+    return this.http
+      .get<Message[]>(this.baseUrl + 'messages', {
+        observe: 'response',
+        params,
+      })
+      .subscribe({
+        next: (response) =>
+          setPaginatedResponse(response, this.paginatedResult),
+      });
   }
 
-  getMessageThread(username: string ) {
-    return this.http.get<Message[]>(this.baseUrl + 'messages/thread/' + username);
+  getMessageThread(username: string) {
+    return this.http.get<Message[]>(
+      this.baseUrl + 'messages/thread/' + username
+    );
   }
 
-  sendMessage(username: string, content:string) {
-    return this.http.post<Message>(this.baseUrl + 'messages', {recipientUsername: username, content});
+  sendMessage(username: string, content: string) {
+    return this.http.post<Message>(this.baseUrl + 'messages', {
+      recipientUsername: username,
+      content,
+    });
+  }
+
+  deleteMessage(id: number) {
+    this.http.delete(this.baseUrl + 'messages/' + id);
   }
 }

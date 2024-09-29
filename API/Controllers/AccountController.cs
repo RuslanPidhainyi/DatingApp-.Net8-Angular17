@@ -24,8 +24,8 @@ public class AccountController(DataContext context, ITokenService tokenService, 
       var user = mapper.Map<AppUser>(registerDto);
 
       user.UserName = registerDto.Username.ToLower(); //do BD jest zapisane username mawymi leterammi
-      user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)); //ComputeHash - metoda pobiera tablice bajtów //Encoding.UTF8.GetBytes(password) - uzycie kodowanie tekstu czyli  utworzylismy tablice bajtów z haslem ktore podane przez User'a.
-      user.PasswordSalt = hmac.Key;
+      // user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)); //ComputeHash - metoda pobiera tablice bajtów //Encoding.UTF8.GetBytes(password) - uzycie kodowanie tekstu czyli  utworzylismy tablice bajtów z haslem ktore podane przez User'a.
+      // user.PasswordSalt = hmac.Key;
 
       //Uzywamy sortowanie, aby zakodować już zaszyfrowany hash hasla - to bedzie zrobione dla tego a bys User'y uzywali takiego samego hasla to hash haslo rowniez był inny. Poniewasz jezeli nasza BD zostanie naruszona, kazdy uzytkownik bedzie miał inny skrót hasła(PasswordHash), nawet uzywają tego samego hasla
 
@@ -68,13 +68,13 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
       if (user == null) return Unauthorized("Invalid username");
 
-      using var hmac = new HMACSHA512(user.PasswordSalt);
-      var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));//pobieranie passworda
+      // using var hmac = new HMACSHA512(user.PasswordSalt);
+      // var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));//pobieranie passworda
 
-      for (int i = 0; i < computedHash.Length; i++)
-      {
-         if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
-      }
+      // for (int i = 0; i < computedHash.Length; i++)
+      // {
+      //    if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
+      // }
 
       return new UserDto
       {

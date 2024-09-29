@@ -10,30 +10,31 @@ namespace API.Data;
 public class Seed
 {   
     //UserManager - daje nam dostep do db
-    public static async Task SeedUsers(UserManager<AppUser> userManager)
+    public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
     {
-        Console.WriteLine("Checking if users already exist...");
 
-        if (await userManager.Users.AnyAsync())
-        {
-            Console.WriteLine("Users already exist. Skipping seed.");
-            return; //перевіряє, чи є вже користувачі в базі даних. Якщо є, метод виходить.
-        }
-
-        Console.WriteLine("Reading user data from JSON file...");
+        if (await userManager.Users.AnyAsync()) return; //перевіряє, чи є вже користувачі в базі даних. Якщо є, метод виходить.
 
         var userData = await File.ReadAllTextAsync("Data/UserSeedData.json"); //Зчитування  початкових даних із файлу, здійснюється асинхронно за допомогою методу File.ReadAllTextAsync, що підвищує продуктивність програми.
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData, options);
 
-        if (users == null)
-        {
-            Console.WriteLine("No user data found in JSON file.");
-            return;
-        }
+        if (users == null) return;
 
-        Console.WriteLine("Seeding users to database...");
+        var roles = new List<AppRole>
+        {
+            //new AppRole{Name ="Member"}
+            new() {Name ="Member"},
+            new() {Name ="Admin"},
+            new() {Name ="Moderator"},
+
+        };
+
+        foreach(var role in roles)
+        {
+            await roleManager.CreateAsync(role);
+        }
 
         foreach (var user in users)
         {
@@ -45,6 +46,7 @@ public class Seed
             
             user.UserName = user.UserName!.ToLower();
             await userManager.CreateAsync(user, "Pa$$w0rd");
+            await userManager.AddToRoleAsync(user, "Member");
         }
 
         /*
@@ -53,6 +55,19 @@ public class Seed
         */
 
         //await context.SaveChangesAsync();
+
+        var admin = new AppUser 
+        {
+            UserName = "admin",
+            KnownAs = "Admin",
+            Gender = "",
+            City = "",
+            Country = "",
+        };
+
+        await userManager.CreateAsync(admin, "Pa$$w0rd");
+        await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);
+
     }
 
 

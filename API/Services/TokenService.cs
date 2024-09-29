@@ -17,6 +17,8 @@ public class TokenService(IConfiguration config) : ITokenService
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));//Teraz nasz token będzie zawierał informacje o użytkowniku
 
+      if(user.UserName == null) throw new Exception("No username for user");
+
       /*Istnieje 2 rodzaje klucza: Symetryczny i Asymetryczny.
       
       SymmetricSecurityKey - symetryczny klucz bezpiczenstwa  szyfrowania i odszyfrowania informacji. 

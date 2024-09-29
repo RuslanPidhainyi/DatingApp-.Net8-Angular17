@@ -66,7 +66,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
       
       */
 
-      if (user == null) return Unauthorized("Invalid username");
+      if (user == null || user.UserName == null ) return Unauthorized("Invalid username");
 
       // using var hmac = new HMACSHA512(user.PasswordSalt);
       // var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));//pobieranie passworda
@@ -88,6 +88,6 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
    private async Task<bool> UserExists(string username)
    {
-      return await context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+      return await context.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());
    }
 }

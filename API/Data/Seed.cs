@@ -43,7 +43,7 @@ public class Seed
             // user.PasswordSalt = hmac.Key;
             //context.Users.Add(user);
             
-
+            user.UserName = user.UserName!.ToLower();
             await userManager.CreateAsync(user, "Pa$$w0rd");
         }
 

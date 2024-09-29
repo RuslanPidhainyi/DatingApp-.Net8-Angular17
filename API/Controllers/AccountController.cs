@@ -5,12 +5,13 @@ using API.DTOs;
 using API.Entities;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AccountController(DataContext context, ITokenService tokenService, IMapper mapper) : BaseApiController
+public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService, IMapper mapper) : BaseApiController
 {
    [HttpPost("register")] //account/register
    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -19,7 +20,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
       //Ключове слово using у середині методу використовується для того, щоб вказати на те, що об'єкт, який створюється, повинен бути автоматично знищений після завершення блоку коду, в якому він використовується. Це допомагає звільнити ресурси, що використовуються об'єктом (наприклад, файли, мережеві з'єднання, потоки тощо).(а точніше, буде викликано його метод Dispose) 
 
-      using var hmac = new HMACSHA512();//algortmu do haszującego tekstu - robi szyfrowanie tekstu 
+      //using var hmac = new HMACSHA512();//algortmu do haszującego tekstu - robi szyfrowanie tekstu 
 
       var user = mapper.Map<AppUser>(registerDto);
 
@@ -30,8 +31,13 @@ public class AccountController(DataContext context, ITokenService tokenService, 
       //Uzywamy sortowanie, aby zakodować już zaszyfrowany hash hasla - to bedzie zrobione dla tego a bys User'y uzywali takiego samego hasla to hash haslo rowniez był inny. Poniewasz jezeli nasza BD zostanie naruszona, kazdy uzytkownik bedzie miał inny skrót hasła(PasswordHash), nawet uzywają tego samego hasla
 
 
-      context.Users.Add(user);//przekazujemy do naszego context'a nowego User'a
-      await context.SaveChangesAsync();//zapisujemy zmiany do bd, (czyli stworzenego user'a) - zapisywane zmiany w EF
+      //context.Users.Add(user);//przekazujemy do naszego context'a nowego User'a
+      //await context.SaveChangesAsync();//zapisujemy zmiany do bd, (czyli stworzenego user'a) - zapisywane zmiany w EF
+
+      var result = await userManager.CreateAsync(user, registerDto.Password);
+
+
+      if(!result.Succeeded) return BadRequest(result.Errors);
 
       //return user; // po zapisaniu naszego user'a w bd mozemy zwrocic user'a, ktorego wlasnie utworzylismy 
       //Ale tutaj nie zwracamy juz user'a, a zwracamy nowe DTO uzytkownika
@@ -47,10 +53,11 @@ public class AccountController(DataContext context, ITokenService tokenService, 
    [HttpPost("login")]
    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
    {
-      var user = await context.Users
+      var user = await userManager.Users
       .Include(p => p.Photos)
          .FirstOrDefaultAsync(x =>
-            x.UserName == loginDto.Username.ToLower()); //FirstOrDefaultAsync - abo wysli nam object ktore spewnia kryteria lub zwroci "null" 
+            x.NormalizedUserName == loginDto.Username.ToUpper());
+            //x.UserName == loginDto.Username.ToLower()); //FirstOrDefaultAsync - abo wysli nam object ktore spewnia kryteria lub zwroci "null" 
       //x.UserName - okreslilismy ze nasze names' user'y będą konvertowane na male litery w naszej BD
       //loginDto.Username.ToLower() dla czego zrobilismy konwertacje na male, aby dopasowac podobne do podobnych
 
@@ -67,6 +74,10 @@ public class AccountController(DataContext context, ITokenService tokenService, 
       */
 
       if (user == null || user.UserName == null ) return Unauthorized("Invalid username");
+
+      var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
+
+      if(!result) return Unauthorized();
 
       // using var hmac = new HMACSHA512(user.PasswordSalt);
       // var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));//pobieranie passworda
@@ -88,6 +99,6 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
    private async Task<bool> UserExists(string username)
    {
-      return await context.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());
+      return await userManager.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());
    }
 }

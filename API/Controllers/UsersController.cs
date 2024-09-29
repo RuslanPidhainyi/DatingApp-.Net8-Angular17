@@ -14,9 +14,9 @@ namespace API.Controllers;
 
 [Authorize]
 public class UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService) : BaseApiController
-{
-   //Metoda do zwracania odpowiedzi HTTP  do klienta 
-   [HttpGet] //Ządania HTTP Get 
+{  
+   //[Authorize(Roles = "Admin")]
+   [HttpGet] //Metoda do zwracania odpowiedzi HTTP  do klienta  //Ządania HTTP Get 
    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams) /*publiczna metoda.
 
                                                          Result action - jako typ rzeczy, ktore zamierzamy zwrocic z tego  punktu koncowego API
@@ -38,8 +38,9 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
    //oprocz user'a API, chelibysmy wiedzic id user'a np w URL musi byc cos  takiego
    //[HttpGet("{id:int}")]  //np w URL musi byc cos  takiego - api/user/1 //:int - to jest bezpeczenstwo typu i okreslic ograniczenie - mowi nam ze nasz identyfikator biedzie typu integer.  
 
-   //[HttpGet("{username:string}")] //parametr trasy jest domyslnie stringiem
-   [HttpGet("{username}")]
+
+   //[Authorize(Roles = "Member")]
+   [HttpGet("{username}")] //[HttpGet("{username:string}")] //parametr trasy jest domyslnie stringiem
    public async Task<ActionResult<MemberDto>> GetUser(string username)
    {
       var user = await userRepository.GetMemberAsync(username);

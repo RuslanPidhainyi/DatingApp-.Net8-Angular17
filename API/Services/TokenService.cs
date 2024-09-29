@@ -3,13 +3,14 @@ using System.Security.Claims;
 using System.Text;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration config) : ITokenService
+public class TokenService(IConfiguration config, UserManager<AppUser> userManager) : ITokenService
 {
-   public string CreateToken(AppUser user)
+   public async Task<string> CreateToken(AppUser user)
    {  
       //Nasz klucz ktory jest wlasciwoscio "TokenKey"
       var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot access tokenKey from appsettings"); //?? - jezeli null to zrob cos (w moim wypadku mam Exception)
@@ -33,6 +34,10 @@ public class TokenService(IConfiguration config) : ITokenService
          new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
          new Claim(ClaimTypes.Name, user.UserName)
       };
+
+      var roles = await userManager.GetRolesAsync(user);
+
+      claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
       var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);//Haszowania 512 algorytm ktory sluzy do podpisywania naszego klucza -  part signature/ czesc Podpis klucza
 

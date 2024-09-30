@@ -1,13 +1,14 @@
 ﻿using API.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Entities;
 
-public class AppUser
+public class AppUser : IdentityUser<int>
 {
-   public int Id { get; set; }
-   public required string UserName { get; set; } //required nie mozemy utworzyc usera, bez podanej jego nazwy 
-   public byte[] PasswordHash { get; set; } = [];
-   public byte[] PasswordSalt { get; set; } = [];//passSalt - zmieni nam nasz passHash, zrobione dlatego jezli user wpisze słabe chaslo
+   // public int Id { get; set; }
+   // public required string UserName { get; set; } //required nie mozemy utworzyc usera, bez podanej jego nazwy 
+   // public byte[] PasswordHash { get; set; } = [];
+   //public byte[] PasswordSalt { get; set; } = [];//passSalt - zmieni nam nasz passHash, zrobione dlatego jezli user wpisze słabe chaslo
    public DateOnly DateOfBirth { get; set; }
    public required string KnownAs { get; set; }
 
@@ -25,5 +26,5 @@ public class AppUser
    public List<UserLike> LikedUsers { get; set; } = [];
    public List<Message> MessagesSent { get; set; } = [];
    public List<Message> MessagesReceived { get; set; } = [];
-
+   public ICollection<AppUserRole> UserRoles { get; set; } = [];
 }

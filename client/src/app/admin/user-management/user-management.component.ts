@@ -1,10 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AdminService } from '../../_services/admin.service';
 import { User } from '../../_models/user';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { RolesModalComponent } from '../../modals/roles-modal/roles-modal.component';
-import { Title } from '@angular/platform-browser';
-
 @Component({
   selector: 'app-user-management',
   standalone: true,
@@ -13,32 +11,40 @@ import { Title } from '@angular/platform-browser';
   styleUrl: './user-management.component.css'
 })
 export class UserManagementComponent implements OnInit {
-  private adminServices = inject(AdminService);
-  private modalServices = inject(BsModalService);
+  private adminService = inject(AdminService);
+  private modalService = inject(BsModalService);
   users: User[] = [];
-  bsModalRef:BsModalRef<RolesModalComponent> = new BsModalRef<RolesModalComponent>();
-
+  bsModalRef: BsModalRef<RolesModalComponent> = new BsModalRef<RolesModalComponent>();
   ngOnInit(): void {
     this.getUsersWithRoles();
   }
-
-  openRolesModal() {
+  openRolesModal(user: User) {
     const initialState: ModalOptions = {
       class: 'modal-lg',
       initialState: {
         title: 'User roles',
-        list: ['Admin', 'Moderator', 'Member']
+        username: user.username,
+        selectedRoles: [...user.roles],
+        availableRoles: ['Admin', 'Moderator', 'Member'],
+        users: this.users,
+        rolesUpdated: false
       }
     }
-    this.bsModalRef = this.modalServices.show(RolesModalComponent, initialState);
+    this.bsModalRef = this.modalService.show(RolesModalComponent, initialState);
+    this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef.content && this.bsModalRef.content.rolesUpdated) {
+          const selectedRoles = this.bsModalRef.content.selectedRoles;
+          this.adminService.updateUserRoles(user.username, selectedRoles).subscribe({
+            next: roles => user.roles = roles
+          })
+        }
+      }
+    })
   }
-
   getUsersWithRoles() {
-    this.adminServices.getUserWithRoles().subscribe({
+    this.adminService.getUserWithRoles().subscribe({
       next: users => this.users = users
     })
   }
-
-
-
 }

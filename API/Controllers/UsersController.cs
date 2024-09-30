@@ -15,8 +15,7 @@ namespace API.Controllers;
 [Authorize]
 public class UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService) : BaseApiController
 {
-   //Metoda do zwracania odpowiedzi HTTP  do klienta 
-   [HttpGet] //Ządania HTTP Get 
+   [HttpGet] //Ządania HTTP Get //Metoda do zwracania odpowiedzi HTTP  do klienta 
    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams) /*publiczna metoda.
 
                                                          Result action - jako typ rzeczy, ktore zamierzamy zwrocic z tego  punktu koncowego API

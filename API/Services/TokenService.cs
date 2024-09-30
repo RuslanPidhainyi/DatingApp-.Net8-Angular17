@@ -3,13 +3,14 @@ using System.Security.Claims;
 using System.Text;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration config) : ITokenService
+public class TokenService(IConfiguration config, UserManager<AppUser> userManager) : ITokenService
 {
-   public string CreateToken(AppUser user)
+   public async Task<string> CreateToken(AppUser user)
    {  
       //Nasz klucz ktory jest wlasciwoscio "TokenKey"
       var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot access tokenKey from appsettings"); //?? - jezeli null to zrob cos (w moim wypadku mam Exception)
@@ -23,14 +24,20 @@ public class TokenService(IConfiguration config) : ITokenService
       
       AsymetrycznySecurityKey - asymetryczny klucz  to proces z ktorym mamy więc jeden klucz do szyfrowania i drugi do odszyfrowania, ale w naszym przypadku wybieramy jeden klucz, aby rządzić nimi wszystkimi oraz szyfrować  i odszyfrować. ale kiedy używamy tego systemu, musimy upewnić się, że klucz jest bezpiecznie przechowywany na naszym serwerze i nikt nie może uzyskać do niego dostęp i nikt nie może go po prostu zobaczyć*/
 
+       if (user.UserName == null) throw new Exception("No username for user");
+
       //claims - Twierdzenie o userze - czymś co user moze powiedzić o siebie. (np. Mogą powiedzić, że moja data urodzenia jest taka. Twierdzenie, że mam na imię Bob).
 
-      //Tojest standartna definicja claims/Twierdzenie o userze ich wewnętrz tokena
+      //To jest standartna definicja claims/Twierdzenie o userze ich wewnętrz tokena
       var claims = new List<Claim>
       {
          new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
          new Claim(ClaimTypes.Name, user.UserName)
       };
+
+      var roles = await userManager.GetRolesAsync(user);
+      
+      claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
       var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);//Haszowania 512 algorytm ktory sluzy do podpisywania naszego klucza -  part signature/ czesc Podpis klucza
 

@@ -26,8 +26,9 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(x => x.AllowAnyHeader()
-.AllowAnyMethod()
-.WithOrigins("http://localhost:4200", "https://localhost:4200"));
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .WithOrigins("http://localhost:4200", "https://localhost:4200"));
 /*
 Mowimy ze naszej polityce chemy zezwolic na dowolny naglowek i dowolny metod, więc pobierz, opublikuj, umieść, usuń z których żródeł chcemy zezwolić na te ządanie. 
 

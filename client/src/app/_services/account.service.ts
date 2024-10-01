@@ -4,6 +4,7 @@ import { User } from '../_models/user';
 import { map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LikesService } from './likes.service';
+import { PresenceService } from './presence.service';
 
 //@Injectable - dekorator i mowi ze jest to wstrzykiwalne, co oznacza, ze jest to dekorator - ktory mowi ze mozemy uzyc tego komponentu lub servece i wstrzyknac ją do naszych komponentow
 @Injectable({
@@ -12,6 +13,7 @@ import { LikesService } from './likes.service';
 export class AccountService {
   private http = inject(HttpClient); // Інжектуємо HttpClient для здійснення HTTP-запитів.
   private likeService = inject(LikesService);
+  private presenceService = inject(PresenceService);
   baseUrl = environment.apiUrl; // Встановлюємо базовий URL API з файлу конфігурації середовища.
   currentUser = signal<User | null>(null);
   roles = computed(() => {
@@ -55,11 +57,13 @@ export class AccountService {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
     this.likeService.getLikeIds();
+    this.presenceService.createHubConnection(user);
   }
 
   logout() {
     localStorage.removeItem('user'); //konwertujemy w zapis JSON i zapisujemy w localStorege
     this.currentUser.set(null); //ustawiamy sygnal na Userze
+    this.presenceService.stopHubConnection();
   }
 }
 

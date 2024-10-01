@@ -11,19 +11,19 @@ public static class IdentetiServiceExtensions
 {
    public static IServiceCollection AddIdentetiService(this IServiceCollection services, IConfiguration config)
    {
-       services.AddIdentityCore<AppUser>(opt =>
-        {
-            opt.Password.RequireNonAlphanumeric = false;
-        })
-            .AddRoles<AppRole>()
-            .AddRoleManager<RoleManager<AppRole>>()
-            .AddEntityFrameworkStores<DataContext>();
+      services.AddIdentityCore<AppUser>(opt =>
+       {
+          opt.Password.RequireNonAlphanumeric = false;
+       })
+           .AddRoles<AppRole>()
+           .AddRoleManager<RoleManager<AppRole>>()
+           .AddEntityFrameworkStores<DataContext>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
          .AddJwtBearer(options =>
          {
             var tokenKey = config["TokenKey"] ?? throw new Exception("TokenKey not found");
-            
+
             //odszyfrowania tokena
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -32,11 +32,29 @@ public static class IdentetiServiceExtensions
                ValidateIssuer = false,
                ValidateAudience = false
             };
+
+            options.Events = new JwtBearerEvents
+            {
+               OnMessageReceived = context =>
+               {
+                  var accessToken = context.Request.Query["access_token"];
+
+                  var path = context.HttpContext.Request.Path;
+
+                  if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                  {
+                     context.Token = accessToken;
+                  }
+
+                  return Task.CompletedTask;
+               }
+            };
+
          });
 
-         services.AddAuthorizationBuilder()
-            .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
-            .AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
+      services.AddAuthorizationBuilder()
+         .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
+         .AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
 
       return services;
    }

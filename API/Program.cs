@@ -45,6 +45,8 @@ app.UseAuthorization();
 // Configure the HTTP request pipeline.
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
+
 
 //Wzorzec "Lokator usług" - aby uzyskać dostęp do usługi której chcemy użyć poza wstzrykiwaniem zaleznosci
 using var scope = app.Services.CreateScope();

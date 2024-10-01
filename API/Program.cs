@@ -6,6 +6,7 @@ using API.Extensions;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
+using API.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,7 @@ app.UseAuthorization();
 // 2  А потім мами app аби сконфігуровач Поток запитів HTTP
 // Configure the HTTP request pipeline.
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
 
 //Wzorzec "Lokator usług" - aby uzyskać dostęp do usługi której chcemy użyć poza wstzrykiwaniem zaleznosci
 using var scope = app.Services.CreateScope();

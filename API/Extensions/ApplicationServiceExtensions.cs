@@ -50,6 +50,8 @@ public static class ApplicationServiceExtensions
 
       services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
 
+      services.AddSignalR();
+
       return services;//Метод повертає колекцію служб після того, як всі необхідні служби були додані до контейнера.
    }
 }

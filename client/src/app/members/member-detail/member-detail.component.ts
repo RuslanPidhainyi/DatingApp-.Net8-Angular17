@@ -9,6 +9,7 @@ import { TimeagoModule, TimeagoPipe } from 'ngx-timeago';
 import { MemberMessagesComponent } from '../member-messages/member-messages.component';
 import { Message } from '../../_models/message';
 import { MessageService } from '../../_services/message.service';
+import { PresenceService } from '../../_services/presence.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -25,9 +26,9 @@ import { MessageService } from '../../_services/message.service';
   styleUrl: './member-detail.component.css',
 })
 export class MemberDetailComponent implements OnInit {
-  @ViewChild('memberTabs', {static: true}) memberTabs?: TabsetComponent;
+  @ViewChild('memberTabs', { static: true }) memberTabs?: TabsetComponent;
   private messageService = inject(MessageService);
-  private memberService = inject(MembersService);
+  presenceService = inject(PresenceService);
   private route = inject(ActivatedRoute);
   member: Member = {} as Member;
   images: GalleryItem[] = [];
@@ -38,9 +39,10 @@ export class MemberDetailComponent implements OnInit {
     this.route.data.subscribe({
       next: (data) => {
         this.member = data['member'];
-        this.member && this.member.photos.map((p) => {
-          this.images.push(new ImageItem({ src: p.url, thumb: p.url }));
-        });
+        this.member &&
+          this.member.photos.map((p) => {
+            this.images.push(new ImageItem({ src: p.url, thumb: p.url }));
+          });
       },
     });
 

@@ -6,6 +6,7 @@ using API.Extensions;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
+using API.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +26,9 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(x => x.AllowAnyHeader()
-.AllowAnyMethod()
-.WithOrigins("http://localhost:4200", "https://localhost:4200"));
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .WithOrigins("http://localhost:4200", "https://localhost:4200"));
 /*
 Mowimy ze naszej polityce chemy zezwolic na dowolny naglowek i dowolny metod, więc pobierz, opublikuj, umieść, usuń z których żródeł chcemy zezwolić na te ządanie. 
 
@@ -42,6 +44,9 @@ app.UseAuthorization();
 // 2  А потім мами app аби сконфігуровач Поток запитів HTTP
 // Configure the HTTP request pipeline.
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
+
 
 //Wzorzec "Lokator usług" - aby uzyskać dostęp do usługi której chcemy użyć poza wstzrykiwaniem zaleznosci
 using var scope = app.Services.CreateScope();
@@ -52,6 +57,7 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
+    await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]");
     await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)

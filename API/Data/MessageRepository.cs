@@ -38,36 +38,29 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
 
         return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
     }
- 
+
     public async Task<IEnumerable<MessageDto>> GetMessagesThread(string currentUsername, string recipientUsername)
     {
-        var messages = await context.Messages
-            .Where(x => x.RecipientUsername == currentUsername && x.RecipientDeleted == false && x.SenderUsername  == recipientUsername || 
+        var query =  context.Messages
+            .Where(x => x.RecipientUsername == currentUsername && x.RecipientDeleted == false && x.SenderUsername == recipientUsername ||
                         x.SenderUsername == currentUsername && x.SenderDeleted == false && x.RecipientUsername == recipientUsername
             )
             .OrderBy(x => x.MessageSent)
-            .ProjectTo<MessageDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+            .AsQueryable();
 
-        var unreadMessages = messages.Where(x => x.DateRead == null && x.RecipientUsername == currentUsername).ToList();
+        var unreadMessages = query.Where(x => x.DateRead == null && x.RecipientUsername == currentUsername).ToList();
 
-        if(unreadMessages.Count != 0)
+        if (unreadMessages.Count != 0)
         {
-            unreadMessages.ForEach(x => x.DateRead =DateTime.UtcNow);
-            await context.SaveChangesAsync();
+            unreadMessages.ForEach(x => x.DateRead = DateTime.UtcNow);
         }
 
-        return messages;
+        return await query.ProjectTo<MessageDto>(mapper.ConfigurationProvider).ToListAsync();
     }
 
     public async Task<Message?> GetMessage(int id)
     {
         return await context.Messages.FindAsync(id);
-    }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
     }
 
     public void AddGroup(Group group)

@@ -11,6 +11,7 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
 import { User } from '../_models/user';
 import { group } from '@angular/animations';
 import { Group } from '../_models/group';
+import { BusyService } from './busy.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,11 +20,13 @@ export class MessageService {
   baseUrl = environment.apiUrl;
   hubUrl = environment.hubsUrl;
   private http = inject(HttpClient);
+  private busyService = inject(BusyService);
   hubConnection?: HubConnection;
   paginatedResult = signal<PaginatedResult<Message[]> | null>(null);
   messageThread = signal<Message[]>([]);
 
   createHubConnection(user: User, otherUsername: string) {
+    this.busyService.busy();
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'message?user=' + otherUsername, {
         accessTokenFactory: () => user.token
@@ -31,21 +34,24 @@ export class MessageService {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start().catch(error => console.log(error));
+    this.hubConnection.start()
+      .catch(error => console.log(error))
+      .finally(() => this.busyService.idle());
 
-    this.hubConnection.on('ReceiveMessag  eThread', messages => {
-      this.messageThread.set(messages);
+    this.hubConnection.on('ReceiveMessageThread', messages => {
+      this.messageThread.set(messages)
     });
 
     this.hubConnection.on('NewMessage', message => {
       this.messageThread.update(messages => [...messages, message])
     });
 
+
     this.hubConnection.on('UpdatedGroup', (group: Group) => {
-      if(group.connections.some(x => x.username === otherUsername)) {
+      if (group.connections.some(x => x.username === otherUsername)) {
         this.messageThread.update(messages => {
           messages.forEach(message => {
-            if(!message.dateRead) {
+            if (!message.dateRead) {
               message.dateRead = new Date(Date.now());
             }
           })
@@ -56,7 +62,7 @@ export class MessageService {
   }
 
   stopHubConnection() {
-    if(this.hubConnection?.state === HubConnectionState.Connected) {
+    if (this.hubConnection?.state === HubConnectionState.Connected) {
       this.hubConnection.stop().catch(error => console.log(error))
     }
   }
@@ -66,25 +72,18 @@ export class MessageService {
 
     params = params.append('Container', container);
 
-    return this.http
-      .get<Message[]>(this.baseUrl + 'messages', {
-        observe: 'response',
-        params,
-      })
+    return this.http.get<Message[]>(this.baseUrl + 'messages', {observe: 'response', params})
       .subscribe({
-        next: (response) =>
-          setPaginatedResponse(response, this.paginatedResult),
-      });
+        next: response => setPaginatedResponse(response, this.paginatedResult)
+      })
   }
 
   getMessageThread(username: string) {
-    return this.http.get<Message[]>(
-      this.baseUrl + 'messages/thread/' + username
-    );
+    return this.http.get<Message[]>(this.baseUrl + 'messages/thread/' + username);
   }
 
   async sendMessage(username: string, content: string) {
-    return this.hubConnection?.invoke('SendMessage', { recipientUsername: username, content })
+    return this.hubConnection?.invoke('SendMessage', {recipientUsername: username, content})
   }
 
   deleteMessage(id: number) {

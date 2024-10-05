@@ -25,10 +25,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
                   .IsRequired();
 
             modelBuilder.Entity<AppRole>()
-                .HasMany(ur => ur.UserRoles)
-                .WithOne(u => u.Role)
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
+                  .HasMany(ur => ur.UserRoles)
+                  .WithOne(u => u.Role)
+                  .HasForeignKey(ur => ur.RoleId)
+                  .IsRequired();
 
             modelBuilder.Entity<UserLike>()
                   .HasKey(k => new { k.SourceUserId, k.TargetUserId });
@@ -43,7 +43,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, 
                   .HasOne(s => s.TargetUser)
                   .WithMany(l => l.LikedByUsers)
                   .HasForeignKey(s => s.TargetUserId)
-                  .OnDelete(DeleteBehavior.Cascade); //.OnDelete(DeleteBehavior.NoAction); - for SQL Server
+                  .OnDelete(DeleteBehavior.NoAction); //.OnDelete(DeleteBehavior.NoAction); - for SQL Server
 
             modelBuilder.Entity<Message>()
                   .HasOne(x => x.Recipient)
